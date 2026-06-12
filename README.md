@@ -13,6 +13,7 @@ Background: MSc Data Science Engineering (Teesside University). Dissertation on 
 | [health-risk-xai](./health-risk-xai/) | SHAP & LIME explanations for heart disease risk models |
 | [healthcare-ml-benchmark](./healthcare-ml-benchmark/) | Side-by-side comparison of 6 classifiers on diabetes readmission data |
 | [health-data-quality-kit](./health-data-quality-kit/) | Lightweight data quality checks for tabular healthcare-style datasets |
+| [audience-health-xai](./audience-health-xai/) | Plain-language SHAP narratives for clinical vs operational audiences |
 
 ## Stack
 
