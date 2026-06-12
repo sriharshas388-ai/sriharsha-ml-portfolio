@@ -16,6 +16,17 @@ venv/
 .idea/
 .vscode/
 
-# Secrets
+# Secrets and local config (never commit)
 .env
+.env.*
+!.env.example
 *.pem
+*.key
+credentials.json
+secrets.json
+config.local.*
+*.token
+
+# Local virtual environments
+**/venv/
+**/.venv/
