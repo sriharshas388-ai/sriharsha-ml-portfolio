@@ -15,6 +15,7 @@ Background: MSc Data Science Engineering (Teesside University). Dissertation on 
 | [health-data-quality-kit](./health-data-quality-kit/) | Lightweight data quality checks for tabular healthcare-style datasets |
 | [audience-health-xai](./audience-health-xai/) | Plain-language SHAP narratives for clinical vs operational audiences |
 | [pima-diabetes-xai](./pima-diabetes-xai/) | Reproducible 6-model benchmark + permutation/LIME explainability on the real Pima Indians Diabetes dataset (AUROC ≈ 0.84) |
+| [msc-covid-health-risk](./msc-covid-health-risk/) | MSc dissertation (Distinction): six-model health-risk stratification for non-hospital COVID-19 treatment eligibility on NHS data, with SMOTE, tuning, full report and Power BI dashboard |
 
 ## Stack
 
