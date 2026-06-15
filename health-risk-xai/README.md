@@ -2,7 +2,7 @@
 
 Explainable machine learning for cardiovascular risk prediction.
 
-Built while preparing PhD applications in explainable AI for healthcare. The idea is simple: a model might predict "high risk" but a clinician or analyst needs to know **why**.
+A project driven by my interest in explainable AI for healthcare. The idea is simple: a model might predict "high risk" but a clinician or analyst needs to know **why**.
 
 ## What it does
 
@@ -34,7 +34,7 @@ After running, check `outputs/`:
 
 ## Notes
 
-This is a learning/portfolio project. Explanation UI for non-CS audiences (dashboards, plain-language summaries) is the direction I want to take in PhD research.
+A research/portfolio project. Making explanations usable for non-CS audiences (dashboards, plain-language summaries) is the direction I find most exciting in this area.
 
 ## License
 

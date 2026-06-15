@@ -1,6 +1,6 @@
 # Sriharsha Surannagari — Health ML & Explainable AI Projects
 
-Personal research and portfolio work supporting applications in **Health Data Science** and **Explainable AI**.
+Personal research and portfolio work in **Health Data Science** and **Explainable AI** — projects I build out of genuine curiosity about how we make machine-learning models trustworthy in healthcare.
 
 Background: MSc Data Science Engineering (Teesside University). Dissertation on predictive analytics and health risk stratification using large-scale structured health data. These smaller public-dataset projects explore the same themes — model comparison, data quality, and interpretability for non-technical audiences.
 

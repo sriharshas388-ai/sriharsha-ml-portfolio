@@ -34,3 +34,7 @@ config.local.*
 # scratch
 *.__wtest
 .__wtest
+
+# keep committed result figures
+!**/figures/
+!**/figures/*.png

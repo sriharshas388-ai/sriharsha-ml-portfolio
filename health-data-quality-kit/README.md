@@ -36,7 +36,7 @@ print(report["summary"])
 
 ## Context
 
-Data quality issues directly affect ML fairness and explanation trust. I want to connect DQ checks with explainable AI in my PhD work.
+Data quality issues directly affect ML fairness and explanation trust. Connecting rigorous data-quality checks with explainable AI is a research thread I keep returning to.
 
 ## References (APA)
 

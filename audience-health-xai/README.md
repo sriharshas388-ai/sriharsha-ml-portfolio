@@ -1,6 +1,6 @@
 # Audience Health XAI
 
-Plain-language explanations for healthcare risk predictions — aligned with **audience-centred explainable AI** research (Newcastle COMP2179 theme).
+Plain-language explanations for healthcare risk predictions — my exploration of **audience-centred explainable AI**: the same prediction, explained differently for the people who read it.
 
 ## What it does
 
@@ -31,4 +31,4 @@ Public/synthetic data only. No real patient records.
 - Ghassemi, M., Oakden-Rayner, L., & Beam, A. L. (2021). The false hope of current approaches to explainable AI in health care. *The Lancet Digital Health, 3*(11), e745–e750. https://doi.org/10.1016/S2589-7500(21)00208-9
 - Tonekaboni, S., Joshi, S., McCradden, M. D., & Goldenberg, A. (2019). What clinicians want: Contextualizing explainable ML for clinical end use. *PMLR, 106*, 359–380. https://doi.org/10.48550/arXiv.1905.05134
 
-*Audience-specific narratives draw on Miller's (2019) account of explanation as contrastive and social, and on what clinicians actually want (Tonekaboni et al., 2019). Ghassemi et al. (2021) caution that explanations must be validated for real clinical use — directly the COMP2179 theme.*
+*Audience-specific narratives draw on Miller's (2019) account of explanation as contrastive and social, and on what clinicians actually want (Tonekaboni et al., 2019). Ghassemi et al. (2021) caution that explanations must be validated for real clinical use — the question that motivates this project.*
