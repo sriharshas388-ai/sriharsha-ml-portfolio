@@ -14,6 +14,7 @@ Background: MSc Data Science Engineering (Teesside University). Dissertation on 
 | [healthcare-ml-benchmark](./healthcare-ml-benchmark/) | Side-by-side comparison of 6 classifiers on diabetes readmission data |
 | [health-data-quality-kit](./health-data-quality-kit/) | Lightweight data quality checks for tabular healthcare-style datasets |
 | [audience-health-xai](./audience-health-xai/) | Plain-language SHAP narratives for clinical vs operational audiences |
+| [pima-diabetes-xai](./pima-diabetes-xai/) | Reproducible 6-model benchmark + permutation/LIME explainability on the real Pima Indians Diabetes dataset (AUROC ≈ 0.84) |
 
 ## Stack
 
