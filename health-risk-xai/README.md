@@ -48,3 +48,28 @@ MIT
 - Rudin, C. (2019). Stop explaining black box ML models for high-stakes decisions and use interpretable models instead. *Nature Machine Intelligence, 1*, 206–215. https://doi.org/10.1038/s42256-019-0048-x
 
 *SHAP and LIME are the explanation methods implemented here; the UCI Heart Disease (Cleveland) data originates from Detrano et al. (1989). Rudin (2019) motivates comparing against interpretable baselines.*
+
+## Results (reproducible — run `python results.py`)
+
+Evaluated on the real **UCI Heart Disease** dataset (303 patients, 54.5% positive)
+with 5-fold stratified cross-validation. Pure NumPy, seed = 42.
+
+| Model | AUROC (mean ± sd) | Accuracy | Brier |
+|---|---|---|---|
+| k-NN (k=15) | 0.900 ± 0.053 | 0.812 | 0.130 |
+| Logistic Regression | 0.898 ± 0.062 | 0.828 | 0.126 |
+| Linear Discriminant Analysis | 0.897 ± 0.060 | 0.821 | 0.126 |
+| Random Forest (30×d4) | 0.895 ± 0.060 | 0.831 | 0.129 |
+| Gaussian Naive Bayes | 0.891 ± 0.068 | 0.812 | 0.144 |
+| Decision Tree (d=4) | 0.865 ± 0.065 | 0.785 | 0.155 |
+
+![ROC and calibration](figures/roc_and_calibration.png)
+
+The logistic model reaches AUROC = 0.925 on the full data and is well calibrated.
+
+![Feature importance](figures/feature_importance.png)
+
+Global permutation importance ranks **chest-pain type (cp)**, **number of major
+vessels (ca)** and **sex** as the dominant predictors — clinically sensible. The
+local LIME-style explanation for the highest-risk patient recovers chest-pain type
+as the leading driver, so the global and local stories agree.

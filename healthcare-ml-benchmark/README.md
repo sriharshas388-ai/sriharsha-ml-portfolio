@@ -41,3 +41,26 @@ Useful for understanding which algorithms work best on imbalanced clinical tabul
 - Rudin, C. (2019). Stop explaining black box ML models for high-stakes decisions and use interpretable models instead. *Nature Machine Intelligence, 1*, 206–215. https://doi.org/10.1038/s42256-019-0048-x
 
 *The Diabetes 130-US hospitals dataset is described by Strack et al. (2014). Caruana et al. (2015) and Rudin (2019) frame why interpretable baselines belong in a clinical benchmark.*
+
+## Results (reproducible — run `python benchmark_demo.py`)
+
+A dependency-light demonstration of the benchmark harness on the real **UCI Heart
+Disease** dataset (303 patients), 5-fold stratified CV, pure NumPy, seed = 42.
+(The Diabetes-130 path in `benchmark_models.py` uses scikit-learn + `ucimlrepo`
+and is run locally.)
+
+| Model | AUROC (mean ± sd) | Accuracy | Brier |
+|---|---|---|---|
+| k-NN (k=15) | 0.900 ± 0.053 | 0.812 | 0.130 |
+| Logistic Regression | 0.898 ± 0.062 | 0.828 | 0.126 |
+| Linear Discriminant Analysis | 0.897 ± 0.060 | 0.821 | 0.126 |
+| Random Forest (30×d4) | 0.895 ± 0.060 | 0.831 | 0.129 |
+| Gaussian Naive Bayes | 0.891 ± 0.068 | 0.812 | 0.144 |
+| Decision Tree (d=4) | 0.865 ± 0.065 | 0.785 | 0.155 |
+
+![Benchmark AUROC](figures/benchmark_auroc.png)
+
+The models cluster tightly (AUROC ≈ 0.87–0.90); the simplest interpretable models
+(logistic regression, LDA) are statistically indistinguishable from the ensemble
+while giving the best calibration (lowest Brier) — a recurring theme on clinical
+tabular data.

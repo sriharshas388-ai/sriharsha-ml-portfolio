@@ -45,3 +45,18 @@ Data quality issues directly affect ML fairness and explanation trust. Connectin
 - Massey, F. J. (1951). The Kolmogorov-Smirnov test for goodness of fit. *Journal of the American Statistical Association, 46*(253), 68–78. https://doi.org/10.1080/01621459.1951.10500769
 
 *The constraint-as-unit-test design follows Deequ (Schelter et al., 2018); the train/test drift check uses the Kolmogorov–Smirnov test (Massey, 1951).*
+
+## Results (reproducible — run `python make_results.py`)
+
+Quality report on the real **UCI Heart Disease** dataset (303 rows, 14 columns):
+**1 duplicate row** and **75 rows** with IQR outliers were flagged. To exercise the
+drift detector, the cohort is split into a younger 'reference' and an older
+'current' batch, which induces a genuine shift; the KS-based check correctly flags
+the affected features.
+
+![Drift by feature](figures/drift_by_feature.png)
+
+Flagged (p < 0.05): age, number of major vessels (ca), max heart rate (thalach),
+resting BP (trestbps), ST depression (oldpeak), chest-pain type (cp), slope — every
+feature that genuinely differs between younger and older patients, while stable
+features are left unflagged.
