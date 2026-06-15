@@ -30,3 +30,7 @@ config.local.*
 # Local virtual environments
 **/venv/
 **/.venv/
+
+# scratch
+*.__wtest
+.__wtest
