@@ -130,8 +130,20 @@ def permutation_importance(predict, X, y, reps=10):
     return base, imp
 
 
-def lime_local(predict, x, n=2000, kernel=0.75):
+def lime_local(predict, x, n=2000, kernel=0.75, return_fidelity=False):
+    """Weighted local linear surrogate (LIME-style). With return_fidelity=True
+    also returns the surrogate's local fidelity: the kernel-weighted R^2 between
+    the surrogate and the black-box model in the neighbourhood of x. Fidelity in
+    [~0, 1] says how much to trust the explanation; low fidelity = the linear
+    surrogate poorly mimics the model locally, so the attributions are unreliable
+    (Ribeiro et al., 2016; Bhatt et al., 2020)."""
     S = x + RNG.normal(0, 1.0, (n, len(x))); yp = predict(S)
     dist = np.sqrt(((S-x)**2).sum(1)); w = np.exp(-(dist**2)/(2*kernel**2))+1e-9
     A = np.column_stack([np.ones(n), S-x]); W = np.diag(w)
-    return (np.linalg.pinv(A.T@W@A)@(A.T@W@yp))[1:]
+    beta = np.linalg.pinv(A.T@W@A)@(A.T@W@yp)
+    if not return_fidelity:
+        return beta[1:]
+    pred = A@beta; ybar = np.average(yp, weights=w)
+    ss_res = float(np.sum(w*(yp-pred)**2)); ss_tot = float(np.sum(w*(yp-ybar)**2))
+    r2 = 1.0 - ss_res/(ss_tot+1e-12)
+    return beta[1:], float(r2)

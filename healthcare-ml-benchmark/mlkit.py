@@ -27,6 +27,30 @@ def brier(y, p): return float(np.mean((p-y)**2))
 def acc(y, p):  return float(np.mean((p >= 0.5) == y))
 
 
+def auprc(y, s):
+    """Area under the precision-recall curve (average precision).
+    For imbalanced clinical data AUPRC is more informative than AUROC because
+    precision reacts to false positives under low prevalence
+    (Saito & Rehmsmeier, 2015; McDermott et al., 2024)."""
+    order = np.argsort(-s); yt = y[order]
+    tp = np.cumsum(yt); fp = np.cumsum(1-yt); P = yt.sum()
+    if P == 0: return float("nan")
+    precision = tp/(tp+fp); recall = tp/P
+    recall = np.concatenate([[0.0], recall]); precision = np.concatenate([[1.0], precision])
+    return float(np.sum((recall[1:]-recall[:-1])*precision[1:]))  # step-wise AP
+
+
+def ece(y, p, bins=10):
+    """Expected Calibration Error: weighted gap between confidence and accuracy
+    across equal-width probability bins (Huang et al., 2020). Lower is better."""
+    edges = np.linspace(0, 1, bins+1); e = 0.0
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        m = (p > lo) & (p <= hi) if lo > 0 else (p >= lo) & (p <= hi)
+        if m.sum() == 0: continue
+        e += m.mean()*abs(y[m].mean()-p[m].mean())
+    return float(e)
+
+
 def logreg(Xtr, ytr, Xte, lr=0.1, epochs=600, l2=1e-3):
     w = np.zeros(Xtr.shape[1]); b = 0.0
     for _ in range(epochs):
@@ -108,7 +132,7 @@ def stratified_folds(y, k=5):
 
 def cv_benchmark(X, y, k=5):
     folds = stratified_folds(y, k)
-    res = {m: {"a": [], "ac": [], "b": []} for m in MODELS}
+    res = {m: {"a": [], "ac": [], "b": [], "ap": [], " e": []} for m in MODELS}
     for i in range(k):
         te = folds[i]; tr = np.concatenate([folds[j] for j in range(k) if j != i])
         mu, sd = X[tr].mean(0), X[tr].std(0)+1e-9
@@ -116,7 +140,9 @@ def cv_benchmark(X, y, k=5):
         for m, fn in MODELS.items():
             p = np.clip(fn(Xtr, y[tr], Xte)[0], 1e-6, 1-1e-6)
             res[m]["a"].append(auroc(y[te], p)); res[m]["ac"].append(acc(y[te], p)); res[m]["b"].append(brier(y[te], p))
-    rows = [(m, np.mean(v["a"]), np.std(v["a"]), np.mean(v["ac"]), np.mean(v["b"])) for m, v in res.items()]
+            res[m]["ap"].append(auprc(y[te], p)); res[m][" e"].append(ece(y[te], p))
+    rows = [(m, np.mean(v["a"]), np.std(v["a"]), np.mean(v["ac"]), np.mean(v["b"]),
+             np.mean(v["ap"]), np.mean(v[" e"])) for m, v in res.items()]
     rows.sort(key=lambda r: -r[1]); return rows
 
 

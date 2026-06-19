@@ -61,29 +61,92 @@ def categorical_warnings(df: pd.DataFrame, max_cardinality: int = 50) -> list[di
     return warnings
 
 
+def population_stability_index(
+    expected: pd.Series, actual: pd.Series, bins: int = 10, eps: float = 1e-6
+) -> float:
+    """Population Stability Index (PSI) between a reference and a current sample.
+
+    PSI = sum( (a_i - e_i) * ln(a_i / e_i) ) over bins, where e_i / a_i are the
+    proportion of the expected / actual sample falling in bin i. It quantifies the
+    *magnitude* of a distribution shift, complementing the KS test's binary verdict
+    (Webb et al., 2016). Numeric columns are binned on quantiles of the reference;
+    categorical columns use category frequencies. A small epsilon avoids ln(0).
+
+    Conventional bands: <0.10 insignificant, 0.10-0.25 moderate, >0.25 significant.
+    """
+    expected = expected.dropna()
+    actual = actual.dropna()
+    if len(expected) == 0 or len(actual) == 0:
+        return 0.0
+
+    if pd.api.types.is_numeric_dtype(expected):
+        # Quantile edges from the reference; dedupe to handle low-variance columns.
+        edges = np.unique(np.quantile(expected, np.linspace(0, 1, bins + 1)))
+        if len(edges) < 3:  # not enough distinct values to bin meaningfully
+            return 0.0
+        edges[0], edges[-1] = -np.inf, np.inf
+        e_counts = np.histogram(expected, bins=edges)[0].astype(float)
+        a_counts = np.histogram(actual, bins=edges)[0].astype(float)
+    else:
+        categories = pd.Index(expected.unique()).union(actual.unique())
+        e_counts = expected.value_counts().reindex(categories, fill_value=0).to_numpy(float)
+        a_counts = actual.value_counts().reindex(categories, fill_value=0).to_numpy(float)
+
+    e_prop = e_counts / e_counts.sum()
+    a_prop = a_counts / a_counts.sum()
+    e_prop = np.clip(e_prop, eps, None)
+    a_prop = np.clip(a_prop, eps, None)
+    return float(np.sum((a_prop - e_prop) * np.log(a_prop / e_prop)))
+
+
+def _psi_band(psi: float) -> str:
+    if psi < 0.10:
+        return "insignificant"
+    if psi < 0.25:
+        return "moderate"
+    return "significant"
+
+
 def drift_check(
-    train: pd.DataFrame, test: pd.DataFrame, alpha: float = 0.05
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    alpha: float = 0.05,
+    psi_threshold: float = 0.25,
 ) -> list[dict[str, Any]]:
-    """KS test for numeric columns between train and test."""
+    """Detect distribution drift between a reference (train) and current (test) frame.
+
+    Numeric columns get a KS two-sample test (significance) *and* a PSI value
+    (magnitude). Categorical columns -- previously ignored -- are now covered by PSI
+    on category frequencies. A column is flagged if KS is significant (p < alpha)
+    or PSI exceeds ``psi_threshold``.
+    """
     results = []
     shared = set(train.columns) & set(test.columns)
-    for col in shared:
-        if not pd.api.types.is_numeric_dtype(train[col]):
-            continue
+    for col in sorted(shared):
         tr = train[col].dropna()
         te = test[col].dropna()
         if len(tr) < 20 or len(te) < 20:
             continue
-        stat, pval = stats.ks_2samp(tr, te)
-        if pval < alpha:
-            results.append(
-                {
-                    "column": col,
-                    "ks_statistic": round(float(stat), 4),
-                    "p_value": round(float(pval), 6),
-                    "drift_detected": True,
-                }
-            )
+
+        numeric = pd.api.types.is_numeric_dtype(train[col])
+        psi = round(population_stability_index(tr, te), 4)
+        entry: dict[str, Any] = {
+            "column": col,
+            "type": "numeric" if numeric else "categorical",
+            "psi": psi,
+            "psi_band": _psi_band(psi),
+        }
+
+        flagged = psi >= psi_threshold
+        if numeric:
+            stat, pval = stats.ks_2samp(tr, te)
+            entry["ks_statistic"] = round(float(stat), 4)
+            entry["p_value"] = round(float(pval), 6)
+            flagged = flagged or (pval < alpha)
+
+        if flagged:
+            entry["drift_detected"] = True
+            results.append(entry)
     return results
 
 

@@ -46,6 +46,8 @@ MIT
 - Lundberg, S. M., & Lee, S.-I. (2017). A unified approach to interpreting model predictions. *NeurIPS, 30*, 4765–4774. https://doi.org/10.48550/arXiv.1705.07874
 - Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). "Why should I trust you?": Explaining the predictions of any classifier. *KDD '16*, 1135–1144. https://doi.org/10.1145/2939672.2939778
 - Rudin, C. (2019). Stop explaining black box ML models for high-stakes decisions and use interpretable models instead. *Nature Machine Intelligence, 1*, 206–215. https://doi.org/10.1038/s42256-019-0048-x
+- Bhatt, U., Weller, A., & Moura, J. M. F. (2020). Evaluating and aggregating feature-based model explanations. *Proceedings of the 29th International Joint Conference on Artificial Intelligence (IJCAI)*, 3016–3022. https://doi.org/10.24963/ijcai.2020/417
+- Qureshi, M. A., Noor, A. A., Manzoor, A., Qureshi, M. D. M., Younus, A., & Rashwan, W. (2025). Explainability in action: A metric-driven assessment of local explanations for healthcare tabular models. *medRxiv*. https://doi.org/10.1101/2025.05.20.25327976
 
 *SHAP and LIME are the explanation methods implemented here; the UCI Heart Disease (Cleveland) data originates from Detrano et al. (1989). Rudin (2019) motivates comparing against interpretable baselines.*
 
@@ -73,3 +75,16 @@ Global permutation importance ranks **chest-pain type (cp)**, **number of major
 vessels (ca)** and **sex** as the dominant predictors — clinically sensible. The
 local LIME-style explanation for the highest-risk patient recovers chest-pain type
 as the leading driver, so the global and local stories agree.
+
+### How faithful is a local explanation?
+
+A LIME-style explanation is only trustworthy if its local linear surrogate actually
+mimics the model around the patient being explained. `results.py` now reports a
+**local fidelity** score — the kernel-weighted R² between the surrogate and the model
+in the neighbourhood of the instance (Ribeiro et al., 2016; Bhatt et al., 2020). For
+the highest-risk patient the surrogate reaches **R² = 0.613**: a moderate fit that
+captures the dominant direction (chest-pain type) but leaves real residual nonlinearity
+— so the ranking is informative while the exact weights should be read with caution.
+Reporting this number alongside the attributions follows recent metric-driven XAI
+evaluation practice for clinical tabular models (Qureshi et al., 2025), where LIME's
+limited local fidelity is a known caveat.

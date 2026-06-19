@@ -57,9 +57,10 @@ def main():
     ax[1].set_title("Calibration"); ax[1].legend(loc="upper left")
     fig.tight_layout(); fig.savefig(f"{FIG}/roc_and_calibration.png", dpi=150); plt.close(fig)
 
-    # Local explanation
-    hi = int(np.argmax(p)); contrib = lime_local(predict, Xs[hi])
-    print(f"\nLocal explanation, patient #{hi} (risk={p[hi]:.2f}):")
+    # Local explanation + surrogate fidelity (how faithful the explanation is)
+    hi = int(np.argmax(p)); contrib, fid = lime_local(predict, Xs[hi], return_fidelity=True)
+    print(f"\nLocal explanation, patient #{hi} (risk={p[hi]:.2f}), "
+          f"surrogate fidelity R^2={fid:.3f}:")
     for i in np.argsort(-np.abs(contrib))[:5]: print(f"  {cols[i]}: {contrib[i]:+.4f}")
     print("\nfigures ->", os.listdir(FIG))
 

@@ -18,9 +18,9 @@ def main():
     X, y, cols = load_heart()
     rows = cv_benchmark(X, y)
     print(f"UCI Heart Disease: n={len(X)}, positives={y.mean():.1%}\n")
-    print("| Model | AUROC±sd | Accuracy | Brier |\n|---|---|---|---|")
-    for m, a, s, ac, b in rows:
-        print(f"| {m} | {a:.3f}±{s:.3f} | {ac:.3f} | {b:.3f} |")
+    print("| Model | AUROC±sd | AUPRC | Accuracy | Brier | ECE |\n|---|---|---|---|---|---|")
+    for m, a, s, ac, b, ap, e in rows:
+        print(f"| {m} | {a:.3f}±{s:.3f} | {ap:.3f} | {ac:.3f} | {b:.3f} | {e:.3f} |")
 
     names = [r[0] for r in rows][::-1]; means = [r[1] for r in rows][::-1]; sds = [r[2] for r in rows][::-1]
     fig, ax = plt.subplots(figsize=(7.5, 4))
